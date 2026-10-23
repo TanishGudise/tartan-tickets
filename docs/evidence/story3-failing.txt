@@ -1,0 +1,107 @@
+
+ RUN  v5.0.5 /Users/tanishgudise/Documents/tartan-tickets
+
+ ❯ tests/story3-buy-tickets.test.ts (5 tests | 5 failed) 71ms
+   ❯ Story 3: Buy tickets (5)
+     × caps an order at 4 seats and rejects 5 with a 400 56ms
+     × holds the seats for 10 minutes when checkout starts, then gives them back 4ms
+     × shows a receipt with one ticket code per seat when the simulated payment succeeds 4ms
+     × releases the held seats when the card is declined 5ms
+     × offers the waitlist when the event sells out during checkout 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/story3-buy-tickets.test.ts > Story 3: Buy tickets > caps an order at 4 seats and rejects 5 with a 400
+AssertionError: expected 501 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 501
+
+ ❯ tests/story3-buy-tickets.test.ts:33:90
+     31|
+     32|   it("caps an order at 4 seats and rejects 5 with a 400", async () => {
+     33|     expect((await checkout({ eventId: OPEN_EVENT, name: "Alex Doe", se…
+       |                                                                                          ^
+     34|     expect((await checkout({ eventId: OPEN_EVENT, name: "Alex Doe", se…
+     35|     expect((await checkout({ eventId: OPEN_EVENT, name: "Alex Doe", se…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/story3-buy-tickets.test.ts > Story 3: Buy tickets > holds the seats for 10 minutes when checkout starts, then gives them back
+AssertionError: expected 501 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 501
+
+ ❯ tests/story3-buy-tickets.test.ts:41:24
+     39|     const before = await seatsLeft(OPEN_EVENT);
+     40|     const res = await checkout({ eventId: OPEN_EVENT, name: "Alex Doe"…
+     41|     expect(res.status).toBe(201);
+       |                        ^
+     42|     expect(await seatsLeft(OPEN_EVENT)).toBe(before - 3);
+     43|     vi.advanceTimersByTime(9 * 60 * 1000 + 59 * 1000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/story3-buy-tickets.test.ts > Story 3: Buy tickets > shows a receipt with one ticket code per seat when the simulated payment succeeds
+TypeError: Cannot read properties of undefined (reading 'id')
+ ❯ tests/story3-buy-tickets.test.ts:51:38
+     49|   it("shows a receipt with one ticket code per seat when the simulated…
+     50|     const { order } = await (await checkout({ eventId: OPEN_EVENT, nam…
+     51|     const res = await payOrder(order.id, "success");
+       |                                      ^
+     52|     expect(res.status).toBe(200);
+     53|     const body = await res.json();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/story3-buy-tickets.test.ts > Story 3: Buy tickets > releases the held seats when the card is declined
+AssertionError: expected 48 to be 44 // Object.is equality
+
+- Expected
++ Received
+
+- 44
++ 48
+
+ ❯ tests/story3-buy-tickets.test.ts:63:41
+     61|     const before = await seatsLeft(OPEN_EVENT);
+     62|     const { order } = await (await checkout({ eventId: OPEN_EVENT, nam…
+     63|     expect(await seatsLeft(OPEN_EVENT)).toBe(before - 4);
+       |                                         ^
+     64|     const res = await payOrder(order.id, "decline");
+     65|     expect(res.status).toBe(402);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/story3-buy-tickets.test.ts > Story 3: Buy tickets > offers the waitlist when the event sells out during checkout
+AssertionError: expected 501 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 501
+
+ ❯ tests/story3-buy-tickets.test.ts:72:94
+     70|     // 48 seats left: twelve buyers hold 4 each, so the event is sold …
+     71|     for (let i = 0; i < 12; i++) {
+     72|       expect((await checkout({ eventId: OPEN_EVENT, name: `Buyer ${i}`…
+       |                                                                                              ^
+     73|     }
+     74|     const res = await checkout({ eventId: OPEN_EVENT, name: "Late Buye…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  5 failed | 3 passed (8)
+   Start at  22:26:25
+   Duration  378ms (tests 40%, transform 39%, import 17%, worker 4%)
+

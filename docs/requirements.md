@@ -92,3 +92,11 @@ As an officer, I want to scan tickets at the door.
 - All tests pass, including the security tests.
 - A person has reviewed the code against this spec.
 - The docs and the spec match the shipped behavior.
+
+## Scope for HW3
+
+- Build story 3: Buy tickets.
+- No real payments. Where the spec says to charge a card, use a "Simulated payment" button (with a "Simulate declined card" button to exercise the decline rule) and list real payments as a non-goal in the README.
+- No sign-in provider. Where the spec needs a signed-in user, use a name typed into a text box and list real authentication as a non-goal.
+- No database. Keep data in memory on the server and say in the README that it resets on every deploy.
+- No email provider. Where story 3 says to email a receipt with a QR code, show the receipt and one ticket code per seat on screen right after payment, and list email delivery as a non-goal.
