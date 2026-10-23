@@ -4,6 +4,11 @@ import { randomBytes } from "node:crypto";
 
 export const MAX_SEATS_PER_ORDER = 4;
 export const HOLD_MINUTES = 10;
+// SEC-16: more than 5 checkouts for one event within 10 minutes blocks that
+// account (here, the typed name) from checking out for 30 minutes.
+export const CHECKOUT_LIMIT = 5;
+const CHECKOUT_WINDOW_MS = 10 * 60 * 1000;
+const CHECKOUT_BLOCK_MS = 30 * 60 * 1000;
 
 export type TicketEvent = {
   id: string;
@@ -38,10 +43,29 @@ function seedEvents(): TicketEvent[] {
 
 let events = seedEvents();
 let orders = new Map<string, Order>();
+let checkoutTimes = new Map<string, number[]>();
+let checkoutBlockedUntil = new Map<string, number>();
 
 export function resetStore() {
   events = seedEvents();
   orders = new Map();
+  checkoutTimes = new Map();
+  checkoutBlockedUntil = new Map();
+}
+
+// Records a checkout attempt and returns false if this account is blocked.
+function allowCheckout(name: string, eventId: string, now: number) {
+  const key = `${name.toLowerCase()}|${eventId}`;
+  if ((checkoutBlockedUntil.get(key) ?? 0) > now) return false;
+  const recent = (checkoutTimes.get(key) ?? []).filter((t) => now - t < CHECKOUT_WINDOW_MS);
+  if (recent.length >= CHECKOUT_LIMIT) {
+    checkoutBlockedUntil.set(key, now + CHECKOUT_BLOCK_MS);
+    checkoutTimes.set(key, recent);
+    return false;
+  }
+  recent.push(now);
+  checkoutTimes.set(key, recent);
+  return true;
 }
 
 function expireHolds(now: number) {
@@ -85,7 +109,7 @@ export function listUpcomingEvents(now: Date = new Date()) {
 
 export type CheckoutResult =
   | { ok: true; order: Order }
-  | { ok: false; status: 400 | 404 | 409; error: string; offer?: "waitlist" };
+  | { ok: false; status: 400 | 404 | 409 | 429; error: string; offer?: "waitlist" };
 
 // Starts checkout and holds the seats. The total is computed here from the
 // stored price; nothing the browser sends about money is used (SEC-8).
@@ -99,6 +123,9 @@ export function startCheckout(input: { eventId: unknown; name: unknown; seats: u
   }
   const event = typeof input.eventId === "string" ? getEvent(input.eventId) : undefined;
   if (!event || Date.parse(event.startsAt) <= now) return { ok: false, status: 404, error: "Event not found." };
+  if (!allowCheckout(name, event.id, now)) {
+    return { ok: false, status: 429, error: "Too many checkouts for this event. Try again in 30 minutes." };
+  }
   if (seatsRemaining(event, now) < seats) {
     return { ok: false, status: 409, error: "Not enough seats left. Join the waitlist instead.", offer: "waitlist" };
   }

@@ -44,7 +44,7 @@ Status of each requirement in [docs/SECURITY_SPEC.md](docs/SECURITY_SPEC.md) aga
 | SEC-13 | Partly | Ticket codes are 128-bit random tokens with no personal data, but there is no QR image and no server-side scan lookup. |
 | SEC-14 | Not at all | No check-in yet. |
 | SEC-15 | Not at all | No scanning yet. |
-| SEC-16 | Not at all | Anyone can start unlimited checkouts for one event and hold all of its seats for 10 minutes at a time. |
+| SEC-16 | Partly | Satisfied: the server refuses a 6th checkout for the same event from the same name within 10 minutes and blocks that name for 30 minutes (429), tested in `tests/sec16-checkout-hoarding.test.ts`. Still missing: the "account" is a typed name, so typing a new name gets around it (needs real sign-in), and the counts live in one server's memory, so they reset on deploy and are not shared across Vercel's server copies (needs a shared store). Officers are not notified. |
 | SEC-17 | Partly | Orders store name, seats, total, and status only; there is no email or Stripe payment ID yet. |
 | SEC-18 | Not at all | No retention job (memory resets on deploy, which is not a policy). |
 | SEC-19 | Not at all | No attendee export. |
