@@ -1,0 +1,9 @@
+
+ RUN  v5.0.5 /Users/tanishgudise/Documents/tartan-tickets
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  22:25:00
+   Duration  248ms (transform 51%, tests 26%, import 18%, worker 5%)
+

@@ -1,0 +1,24 @@
+
+ RUN  v5.0.5 /Users/tanishgudise/Documents/tartan-tickets
+
+ ❯ tests/story1-browse-events.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/story1-browse-events.test.ts [ tests/story1-browse-events.test.ts ]
+Error: Cannot find module '../app/api/events/route' imported from /Users/tanishgudise/Documents/tartan-tickets/tests/story1-browse-events.test.ts
+ ❯ tests/story1-browse-events.test.ts:2:1
+      1| import { beforeEach, describe, expect, it } from "vitest";
+      2| import { GET } from "../app/api/events/route";
+       | ^
+      3| import { resetStore } from "../lib/store";
+      4|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  22:24:37
+   Duration  199ms (worker 95%, environment 5%)
+
